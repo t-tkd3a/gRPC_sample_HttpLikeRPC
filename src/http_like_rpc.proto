@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package HttpLikeRpc;
+
+// The greeting service definition.
+service HttpLike{
+  rpc Post (HttpLikeObject) returns (HttpLikeObject) {}
+}
+
+// The request message containing the user's name.
+message HttpLikeObject {
+  uint32 code = 1;
+  string message = 2;
+  map<string, string> map_arg_string = 3;
+  map<string, bytes> map_arg_bin = 4;
+}
+
+
