@@ -111,6 +111,9 @@ dkms.conf
 
 # Executables
 
+### Ecripse ###
+.cproject
+.project
 
 # End of https://www.gitignore.io/api/c,c++,autotools
 
