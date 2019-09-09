@@ -46,16 +46,15 @@ class HttpLikeClient {
 };
 
 
-void SampleClientHellow() {
+void SampleClientHellow(const char *server_address) {
   std::cout << "--- SampleClientHellow() ---" << std::endl;
 
   HttpLikeObject request = {};
   HttpLikeObject response = {};
   HttpLikeClient client(grpc::CreateChannel(
-    "127.0.0.1:55551", grpc::InsecureChannelCredentials()));
+      server_address,grpc::InsecureChannelCredentials()));
 
-
-  request.set_message("hello");
+  request.set_message(HttpLikeRpc::kCmdHello);
 
   std::cout << "request :" << HttpLikeRpc::DumpToString(&request) << std::endl;
   if ( ! client.Post(request, response) ) {
@@ -73,15 +72,15 @@ void SampleClientHellow() {
 }
 
 
-void SampleClientIp() {
+void SampleClientIp(const char *server_address) {
   std::cout << "--- SampleClientIp() ---" << std::endl;
 
   HttpLikeObject request = {};
   HttpLikeObject response = {};
   HttpLikeClient client(grpc::CreateChannel(
-    "127.0.0.1:55551", grpc::InsecureChannelCredentials()));
+      server_address, grpc::InsecureChannelCredentials()));
 
-  request.set_message("ip");
+  request.set_message(HttpLikeRpc::kCmdIP);
   std::cout << "request :" << HttpLikeRpc::DumpToString(&request) << std::endl;
   if ( ! client.Post(request, response) ) {
     std::cerr << "Post failed." << std::endl;
@@ -97,7 +96,7 @@ void SampleClientIp() {
 }
 
 
-void SampleClientWithBin() {
+void SampleClientWithBin(const char *server_address) {
   std::cout << "--- SampleClientWithBin() ---" << std::endl;
 
   std::vector<uint8_t> bin(256,0);
@@ -106,16 +105,16 @@ void SampleClientWithBin() {
   HttpLikeObject request = {};
   HttpLikeObject response = {};
   HttpLikeClient client(grpc::CreateChannel(
-    "127.0.0.1:55551", grpc::InsecureChannelCredentials()));
+      server_address, grpc::InsecureChannelCredentials()));
 
   // object内の "map<string, string> map_arg_bin" 内に バイナリデータを格納する例
   std::string tmp;
   tmp.resize(bin.size());
   memcpy((uint8_t *)&tmp[0], bin.data(), bin.size());
   request.mutable_map_arg_bin()->insert(
-      HttpLikeRpc::MakeMapPair("data", tmp ));
+      HttpLikeRpc::MakeMapPair(HttpLikeRpc::kArgData, tmp ));
 
-  request.set_message("dumpData");
+  request.set_message(HttpLikeRpc::kCmdDumpData);
   std::cout << "request :" << HttpLikeRpc::DumpToString(&request) << std::endl;
   if ( ! client.Post(request, response) ) {
     std::cerr << "Post failed." << std::endl;
@@ -126,9 +125,14 @@ void SampleClientWithBin() {
 }
 
 int main(int argc, char** argv) {
-  SampleClientHellow();
-  SampleClientIp();
-  SampleClientWithBin();
-  SampleClientIp();
+  std::string server_address = HttpLikeRpc::GetAddrString(
+      HttpLikeRpc::g_ServerAddress,
+      HttpLikeRpc::g_DefaultListenPort
+     );
+
+  SampleClientHellow(server_address.c_str());
+  SampleClientIp(server_address.c_str());
+  SampleClientWithBin(server_address.c_str());
+  SampleClientIp(server_address.c_str());
   return 0;
 }

@@ -14,6 +14,23 @@
 
 namespace HttpLikeRpc {
 
+const char *g_ServerAddress = "127.0.0.1";
+const uint16_t g_DefaultListenPort = 55551;
+
+const char *kCmdIP = "IP";
+const char *kCmdHello = "hello";
+const char *kCmdDumpData = "dumpData";
+
+const char *kArgData = "Data";
+
+
+std::string GetAddrString(const char *addr, uint16_t port) {
+  std::string return_string(addr);
+  return_string += ":";
+  return_string += std::to_string(port);
+  return return_string;
+}
+
 using MakeMapPair =
         google::protobuf::MapPair<std::string, std::string>;
 
@@ -37,6 +54,7 @@ std::string DumpToString(const HttpLikeObject* obj) {
   retuen_stream << "]";
   return retuen_stream.str();
 }
+
 
 }// namespace HttpLikeRpc
 

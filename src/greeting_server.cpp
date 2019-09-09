@@ -38,7 +38,7 @@ public :
     std::cout << "GetPeerIdentityPropertyName: ";
     std::cout << context->auth_context()->GetPeerIdentityPropertyName() << std::endl;
 
-    if (request->message() == "hello") {
+    if (request->message() == HttpLikeRpc::kCmdHello) {
       response->set_code(200);
       response->set_message("200 OK.");
       // object内の "map<string, string> map_arg_string" に key と value を 格納する例
@@ -46,7 +46,7 @@ public :
       return Status::OK;
     }
 
-    if (request->message() == "ip") {
+    if (request->message() == HttpLikeRpc::kCmdIP) {
       response->set_code(200);
       response->set_message("200 OK.");
       response->mutable_map_arg_string()->insert(HttpLikeRpc::MakeMapPair("result", context->peer()));
@@ -54,8 +54,8 @@ public :
     }
 
     // object内 の "map<string, string> map_arg_bin" 内 から Key 名で 値を取得する例
-    if (request->message() == "dumpData") {
-      auto itr = request->map_arg_bin().find("data");
+    if (request->message() == HttpLikeRpc::kCmdDumpData) {
+      auto itr = request->map_arg_bin().find(HttpLikeRpc::kArgData);
       if (itr != request->map_arg_string().end()) {
         for(int i=0; i<itr->second.size();i++){
           printf("%02X ", (uint8_t)itr->second[i]);
@@ -144,7 +144,7 @@ void HttpLikeServer::Shutdown() {
 
 int main(int argc, char** argv) {
   HttpLikeServer http_like_server;
-  http_like_server.Run("0.0.0.0",55551);
+  http_like_server.Run("0.0.0.0", HttpLikeRpc::g_DefaultListenPort);
 
   sleep(120);
 
