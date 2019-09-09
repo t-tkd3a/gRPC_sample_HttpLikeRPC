@@ -111,9 +111,16 @@ dkms.conf
 
 # Executables
 
+### gRPC ###
+*.pb.cc
+*.pb.h
+
+
 ### Ecripse ###
 .cproject
 .project
+
+
 
 # End of https://www.gitignore.io/api/c,c++,autotools
 
